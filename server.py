@@ -7,6 +7,7 @@ import threading
 CACHE_POLICY = True  # whether to cache responses or not
 # the maximum time that the response can be cached for (in seconds)
 CACHE_CONTROL = 2 ** 16 - 1
+BUFFER_LENGTH = 8180
 
 
 def calculate(expression: api.Expr, steps: list[str] = []) -> tuple[numbers.Real, list[api.Expression]]:
@@ -46,7 +47,7 @@ def calculate(expression: api.Expr, steps: list[str] = []) -> tuple[numbers.Real
             arg, arg_steps = calculate(arg, arg_steps)
             for step in arg_steps[:-1]:
                 steps.append(api.FunctionCallExpr(expr.function, *
-                             (args + [step] + expr.args[len(args) + 1:])))
+                (args + [step] + expr.args[len(args) + 1:])))
             args.append(arg)
         steps.append(api.FunctionCallExpr(expr.function, *args))
         const = api.Constant(expr.function.function(*args))
@@ -89,6 +90,8 @@ def server(host: str, port: int) -> None:
 
         # Prepare the server socket
         # * Fill in start (1)
+        server_socket.bind((host, port))
+        server_socket.listen(1)
         # * Fill in end (1)
 
         threads = []
@@ -97,8 +100,8 @@ def server(host: str, port: int) -> None:
         while True:
             try:
                 # Establish connection with client.
-                
-                client_socket, address = # * Fill in start (2) # * Fill in end (2)
+                client_socket, address = server_socket.accept()  # * Fill in start (2)
+                # * Fill in end (2)
 
                 # Create a new thread to handle the client request
                 thread = threading.Thread(target=client_handler, args=(
@@ -119,11 +122,14 @@ def client_handler(client_socket: socket.socket, client_address: tuple[str, int]
     '''
     client_addr = f"{client_address[0]}:{client_address[1]}"
     client_prefix = f"{{{client_addr}}}"
-    with client_socket:  # closes the socket when the block is exited
+    with (((client_socket))):  # closes the socket when the block is exited
         print(f"Conection established with {client_addr}")
         while True:
-            
-            data = # * Fill in start (3) # * Fill in end (3)
+
+
+            data = client_socket.recv(BUFFER_LENGTH)
+            # * Fill in start (3) # * Fill in end (3)
+
             if not data:
                 break
             try:
@@ -143,6 +149,7 @@ def client_handler(client_socket: socket.socket, client_address: tuple[str, int]
                     f"{client_prefix} Sending response of length {len(response)} bytes")
 
                 # * Fill in start (4)
+                client_socket.send(response)
                 # * Fill in end (4)
 
             except Exception as e:
