@@ -7,7 +7,7 @@ import threading
 CACHE_POLICY = True  # whether to cache responses or not
 # the maximum time that the response can be cached for (in seconds)
 CACHE_CONTROL = 2 ** 16 - 1
-BUFFER_LENGTH = 8180
+BUFFER_LENGTH = 8180 # the Buffer length in bytes
 
 
 def calculate(expression: api.Expr, steps: list[str] = []) -> tuple[numbers.Real, list[api.Expression]]:
@@ -90,8 +90,8 @@ def server(host: str, port: int) -> None:
 
         # Prepare the server socket
         # * Fill in start (1)
-        server_socket.bind((host, port))
-        server_socket.listen(1)
+        server_socket.bind((host, port)) # binding the host and port
+        server_socket.listen(1) # listening to 1 user
         # * Fill in end (1)
 
         threads = []
@@ -100,7 +100,9 @@ def server(host: str, port: int) -> None:
         while True:
             try:
                 # Establish connection with client.
-                client_socket, address = server_socket.accept()  # * Fill in start (2)
+                # * Fill in start (2)
+                client_socket, address = server_socket.accept()  # we extract the ip and port in the process from the incoming package
+                                                                 # the 3 part andshake happens in the back
                 # * Fill in end (2)
 
                 # Create a new thread to handle the client request
@@ -126,9 +128,9 @@ def client_handler(client_socket: socket.socket, client_address: tuple[str, int]
         print(f"Conection established with {client_addr}")
         while True:
 
-
-            data = client_socket.recv(BUFFER_LENGTH)
-            # * Fill in start (3) # * Fill in end (3)
+            # * Fill in start (3)
+            data = client_socket.recv(BUFFER_LENGTH) # we get the data from the stream socket
+            # * Fill in end (3)
 
             if not data:
                 break
@@ -149,7 +151,7 @@ def client_handler(client_socket: socket.socket, client_address: tuple[str, int]
                     f"{client_prefix} Sending response of length {len(response)} bytes")
 
                 # * Fill in start (4)
-                client_socket.send(response)
+                client_socket.send(response) # we send the response to the client
                 # * Fill in end (4)
 
             except Exception as e:

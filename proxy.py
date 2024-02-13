@@ -5,7 +5,7 @@ import socket
 import time
 import math
 
-BUFFER_LENGTH = 8180
+BUFFER_LENGTH = 8180 # the Buffer length in bytes
 cache: dict[tuple[bytes, bool], api.CalculatorHeader] = {}
 INDEFINITE = api.CalculatorHeader.MAX_CACHE_CONTROL
 
@@ -86,8 +86,8 @@ def proxy(proxy_address: tuple[str, int], server_adress: tuple[str, int]) -> Non
 
         # Prepare the proxy socket
         # * Fill in start (1)
-        proxy_socket.bind((proxy_address))
-        proxy_socket.listen(1)
+        proxy_socket.bind((proxy_address)) # binding the host and port
+        proxy_socket.listen(1) # listening to 1 user
         # * Fill in end (1)
 
         threads = []
@@ -121,8 +121,11 @@ def client_handler(client_socket: socket.socket, client_address: tuple[str, int]
         print(f"{client_prefix} Connected established")
         while True:
             # Receive data from the client
-            
-            data = client_socket.recv(BUFFER_LENGTH) # * Fill in start (3) # * Fill in end (3)
+
+            # * Fill in start (3)
+            data = client_socket.recv(BUFFER_LENGTH)  # we get the data from the client
+                                                      # (can be the server or the initial client)
+            # * Fill in end (3)
             
             if not data:
                 break
@@ -157,7 +160,7 @@ def client_handler(client_socket: socket.socket, client_address: tuple[str, int]
 
                 # Send the response back to the client
                 # * Fill in start (4)
-                client_socket.send(response)
+                client_socket.send(response) #we pass forward the package to the client or the server
                 # * Fill in end (4)
                 
             except Exception as e:
