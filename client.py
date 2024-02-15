@@ -88,7 +88,7 @@ if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(description="A Calculator Client.")
 
     arg_parser.add_argument("-p", "--port", type=int,
-                            default=api.DEFAULT_SERVER_PORT, help="The port to connect to.")
+                            default=api.DEFAULT_PROXY_PORT, help="The port to connect to.")
     arg_parser.add_argument("-H", "--host", type=str,
                             default=api.DEFAULT_SERVER_HOST, help="The host to connect to.")
 
@@ -103,7 +103,7 @@ if __name__ == "__main__":
         6, div_b(mul_b(7, 8), 9)), div_b(10, 11))), 12), 13)  # (1)
 
     # (2) '(max(2, 3) + 3)' = 6
-    # expr = add_b(max_f(2, 3), 3) # (2)
+    expr2 = add_b(max_f(2, 3), 3) # (2)
 
     # (3) '3 + ((4 * 2) / ((1 - 5) ** (2 ** 3)))' = 3.0001220703125
     # expr = add_b(3, div_b(mul_b(4, 2), pow_b(sub_b(1, 5), pow_b(2, 3)))) # (3)
@@ -125,5 +125,9 @@ if __name__ == "__main__":
     # that the client is willing to accept (in seconds)
     cache_control = 2**16 - 1
 
-    client((host, port), expr, show_steps,
+    # client((host, port), expr, show_steps,
+    #        cache_result, cache_control)
+
+    client((host, port), expr2, show_steps,
            cache_result, cache_control)
+
